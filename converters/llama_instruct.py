@@ -8,32 +8,33 @@ from converters.exceptions import BackendTimeoutError, ConversionError
 
 class BedrockLlamaConverter(CodeConverter):
     PROMPT_TEMPLATE = ('<s>[INST] <<SYS>>\n'
-                       'You are a profficient Oracle DBA and python programmer working on '
-                       'upgrading database logic from PL/SQL to external python code.\n'
+                       'You are a profficient Oracle DBA and java programmer working on '
+                       'upgrading database logic from PL/SQL to external java code.\n'
                        'Your task is to convert the given PL/SQL code to an equivalent '
-                       'Python function, with the following requirements:\n\n'
-                       '1. The database connection will be passed as a parameter to the translated Python function.\n'
-                       '2. Any called stored procedures should be replaced with calls to their equivalent Python '
-                       'functions (assume these Python functions already exist).\n'
+                       'java function, with the following requirements:\n\n'
+                       '1. The database connection will be passed as a parameter to the translated java function.\n'
+                       '2. Any called stored procedures should be replaced with calls to their equivalent java '
+                       'functions (assume these java functions already exist).\n'
                        '<</SYS>>\n'
                        '\n'
                        '''To convert the code, follow these steps:
 
-1. Define a Python function with the same name as the PL/SQL code block.
+1. Define a java function with the same name as the PL/SQL code block.
 2. Add a parameter to accept the database connection object.
-3. Translate the PL/SQL code line-by-line to Python, making the following changes:
-    - Replace PL/SQL variable declarations with Python variable assignments
-    - Convert PL/SQL control structures (loops, conditionals) to their Python equivalents
-    - Replace calls to stored procedures with calls to the corresponding Python functions, passing the database connection as a parameter
+3. Translate the PL/SQL code line-by-line to java, making the following changes:
+    - Replace PL/SQL variable declarations with java variable assignments
+    - Convert PL/SQL control structures (loops, conditionals) to their java equivalents
+    - Replace calls to stored procedures with calls to the corresponding java functions, passing the database connection as a parameter
 4. Return any values that the original PL/SQL code would have returned
 
-Your converted Python code should have the following structure:
+Your converted java code should have the following structure:
 
-```python
-def function_name(db_conn, ...):
-    # Converted Python code goes here
+```java
+public static void function_name(Connection db_conn, ...){
+    # Converted Java code goes here
     ...
     return ...
+}
 ```
 
 Make sure to handle database operations, such as queries and updates, by calling appropriate methods on the db_conn object instead of executing SQL directly.\n''')
@@ -64,7 +65,7 @@ Make sure to handle database operations, such as queries and updates, by calling
                    'temperature': 0.2,
                    'top_p': 0.9,
                    'max_gen_len': max_new_tokens}
-        payload['prompt'] += f'{original_code}[/INST]\n```python\n{converted_code}'.strip()
+        payload['prompt'] += f'{original_code}[/INST]\n```java\n{converted_code}'.strip()
 
         return payload
 
@@ -109,7 +110,7 @@ Make sure to handle database operations, such as queries and updates, by calling
         model_output = payload['prompt'] + response['generation']
         complete = (response['stop_reason'] == 'stop')
         # We expect start and optionally finish triple quotes
-        matches = re.findall(r'```python\n([\s\S]*?)(?:```|\Z)',
+        matches = re.findall(r'```java\n([\s\S]*?)(?:```|\Z)',
                              model_output,
                              flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
         match len(matches):

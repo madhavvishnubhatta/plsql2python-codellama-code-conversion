@@ -10,7 +10,7 @@ class CodeConverter:
         Convert the given code block
 
         This function will call the FM and request it to translate the code in `original_code`
-        from PL/SQL to Python. If `code_fragment` is provided, it will be used as a base for the
+        from PL/SQL to Java. If `code_fragment` is provided, it will be used as a base for the
         translation.
 
         Parameters

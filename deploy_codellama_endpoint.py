@@ -6,8 +6,8 @@ import sagemaker
 from sagemaker.jumpstart.model import JumpStartModel
 
 
-def main(model_id: str, role_name: str | None = None,
-         endpoint_name: str | None = None,
+def main(model_id: str, role_name: str = None,
+         endpoint_name: str = None,
          instance_type: str = 'ml.g5.12xlarge'):
     """
     Deploy a SageMaker Endpoint for the provided model using the provided ARN
